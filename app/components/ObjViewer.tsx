@@ -10,29 +10,31 @@ interface ObjViewerProps {
 export default function ObjViewer({ objBlob }: ObjViewerProps) {
   const mountRef = useRef<HTMLDivElement>(null);
   const modelRef = useRef<THREE.Object3D | null>(null);
-  const animateIdRef = useRef<number | null>(null); // ✅ 애니메이션 추적
+  const animateIdRef = useRef<number | null>(null);
 
   useEffect(() => {
     const scene = new THREE.Scene();
     scene.background = new THREE.Color(0xffffff);
 
-    const camera = new THREE.PerspectiveCamera(75, 1, 0.1, 1000);
+    const container = mountRef.current!;
+    const { width, height } = container.getBoundingClientRect();
+
+    const camera = new THREE.PerspectiveCamera(75, width / height, 0.1, 1000);
     camera.position.z = 5;
 
     const renderer = new THREE.WebGLRenderer({ antialias: true });
-    renderer.setSize(500, 500);
-    mountRef.current!.appendChild(renderer.domElement);
+    renderer.setSize(width, height);
+    container.appendChild(renderer.domElement);
 
     const light = new THREE.DirectionalLight(0xffffff, 1);
     light.position.set(0, 0, 1).normalize();
     scene.add(light);
 
-    // ✅ 단일 애니메이션 루프 정의
     const animate = () => {
       animateIdRef.current = requestAnimationFrame(animate);
       renderer.render(scene, camera);
     };
-    animate(); // 최초 실행
+    animate();
 
     const reader = new FileReader();
     reader.onload = () => {
@@ -50,14 +52,13 @@ export default function ObjViewer({ objBlob }: ObjViewerProps) {
     reader.readAsText(objBlob);
 
     return () => {
-      // ✅ 렌더 루프 중지
       if (animateIdRef.current) {
         cancelAnimationFrame(animateIdRef.current);
       }
       renderer.dispose();
-      mountRef.current?.removeChild(renderer.domElement);
+      container.removeChild(renderer.domElement);
     };
   }, [objBlob]);
 
-  return <div ref={mountRef} />;
+  return <div ref={mountRef} className="w-full h-full" />;
 }
