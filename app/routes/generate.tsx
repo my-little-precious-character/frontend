@@ -35,7 +35,7 @@ export default function Generate() {
           body: formData.toString(),
         });
         const data = await res.json();
-        setTaskId(data.taskId);
+        setTaskId(data.task_id);
       } else {
         const fileInput = document.createElement("input");
         fileInput.type = "file";
@@ -50,7 +50,7 @@ export default function Generate() {
             body: formData,
           });
           const data = await res.json();
-          setTaskId(data.taskId);
+          setTaskId(data.task_id);
         };
         fileInput.click();
       }
