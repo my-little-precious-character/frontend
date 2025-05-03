@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import type { Route } from "./+types/home";
-import { useSearchParams } from "react-router";
+import { useLocation, useSearchParams } from "react-router";
 
 export function meta({ }: Route.MetaArgs) {
   return [
@@ -10,6 +10,9 @@ export function meta({ }: Route.MetaArgs) {
 
 export default function Generate() {
   const API_BASE = import.meta.env.VITE_RIGNET_URL;
+
+  const location = useLocation();
+  const objFileBlob = location.state?.objFileBlob;
 
   const [progress, setProgress] = useState(0);
   const [taskId, setTaskId] = useState<string | null>(null);
@@ -23,16 +26,19 @@ export default function Generate() {
     hasStartedRef.current = true;
 
     async function startTask() {
+      if (!objFileBlob) {
+        console.error("objFileBlob not found"); // TODO: error handling
+        return;
+      }
+
       const formData = new URLSearchParams();
-      formData.append("prompt", prompt);
+      formData.append("file", objFileBlob);
 
       const res = await fetch(`${API_BASE}/rigging?mode=test`, {
         method: "POST",
-        headers: {
-          "Content-Type": "application/x-www-form-urlencoded",
-        },
-        body: formData.toString(),
+        body: formData,
       });
+
       const data = await res.json();
       setTaskId(data.task_id);
     }
