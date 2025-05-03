@@ -54,9 +54,26 @@ export default function Generate() {
     startTask();
   });
 
-  const secondsLeft = Math.round((1 - progress / 100) * 10);
-  const minutes = Math.floor(secondsLeft / 60);
-  const seconds = secondsLeft % 60;
+  useEffect(() => {
+    if (!taskId) return;
+
+    const ws = new WebSocket(`${API_BASE.replace('http', 'ws')}/image-to-3d/ws`);
+    ws.onopen = () => {
+      ws.send(taskId);
+    };
+    ws.onmessage = (event) => {
+      const status = event.data;
+      const match = /processing.*?(\d+)%/.exec(status);
+      if (match) {
+        setProgress(parseInt(match[1], 10));
+      } else if (status.includes("done")) {
+        setProgress(100);
+        ws.close();
+      }
+    };
+    ws.onerror = () => ws.close();
+    return () => ws.close();
+  }, [taskId]);
 
   return (
     <main className="flex h-screen bg-gray-100 text-gray-800 font-sans">
@@ -111,8 +128,12 @@ export default function Generate() {
             </div>
 
             <p className="text-sm font-medium text-gray-700">
-              남은 시간: {minutes}분 {seconds}초
+              진행률: {progress}%
             </p>
+            {/* TODO: 진행률이 나은지 남은시간이 나은지 비교해서 반영하기 */}
+            {/* <p className="text-sm font-medium text-gray-700">
+              남은 시간: {minutes}분 {seconds}초
+            </p> */}
           </div>
         </div>
       </div>
