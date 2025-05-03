@@ -1,5 +1,6 @@
 import { useState } from "react";
 import type { Route } from "./+types/home";
+import { Link } from "react-router";
 
 export function meta({ }: Route.MetaArgs) {
   return [
@@ -46,12 +47,12 @@ export default function Home() {
               placeholder="체크무늬 셔츠를 입은 공대생"
               className="flex-1 px-4 py-2 text-sm focus:outline-none"
             />
-            <button
-              onClick={handleGenerateWithText}
-              className="bg-orange-600 px-5 text-white text-sm hover:bg-orange-700 transition"
+            <Link
+              to={`/generate?prompt=${encodeURIComponent(prompt)}`}
+              className="bg-orange-600 px-5 text-white text-sm hover:bg-orange-700 transition flex items-center"
             >
               생성하기
-            </button>
+            </Link>
           </div>
         </div>
 
@@ -67,12 +68,12 @@ export default function Home() {
           <h2 className="text-xl font-semibold text-gray-700">
             이미지로 3D 모델 제작
           </h2>
-          <button
-            onClick={handleGenerateWithImage}
-            className="w-full bg-orange-600 hover:bg-orange-700 text-white py-2 rounded-lg transition font-medium"
+          <Link
+            to="/generate"
+            className="w-full bg-orange-600 hover:bg-orange-700 text-white py-2 rounded-lg transition font-medium block text-center"
           >
             이미지 업로드
-          </button>
+          </Link>
         </div>
       </div>
     </main>
