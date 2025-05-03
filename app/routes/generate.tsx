@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import type { Route } from "./+types/home";
-import { useSearchParams } from "react-router";
+import { Link, useSearchParams } from "react-router";
 import ObjViewer from "~/components/ObjViewer";
 
 export function meta({ }: Route.MetaArgs) {
@@ -167,10 +167,18 @@ export default function Generate() {
               <a
                 href={URL.createObjectURL(objFileBlob)}
                 download="model.obj"
-                className="bg-orange-600 text-white px-4 py-2 rounded hover:bg-orange-700"
+                className="bg-gray-200 text-gray-800 px-4 py-2 rounded hover:bg-gray-300 transition"
               >
                 .obj 파일 다운로드
               </a>
+
+              <Link
+                to="/rig"
+                className="bg-orange-600 text-white px-4 py-2 rounded hover:bg-orange-700 transition"
+              >
+                뼈대 생성하러 가기 →
+              </Link>
+
             </div>
           )}
         </div>
