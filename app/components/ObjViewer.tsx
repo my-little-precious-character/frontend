@@ -2,6 +2,8 @@ import { useEffect, useRef } from "react";
 import * as THREE from "three";
 // @ts-ignore
 import { OBJLoader } from "three/examples/jsm/loaders/OBJLoader";
+// @ts-ignore
+import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 
 interface ObjViewerProps {
   objBlob: Blob;
@@ -26,12 +28,18 @@ export default function ObjViewer({ objBlob }: ObjViewerProps) {
     renderer.setSize(width, height);
     container.appendChild(renderer.domElement);
 
+    // ✅ OrbitControls 연결
+    const controls = new OrbitControls(camera, renderer.domElement);
+    controls.enableDamping = true; // 부드러운 회전
+    controls.dampingFactor = 0.05;
+
     const light = new THREE.DirectionalLight(0xffffff, 1);
     light.position.set(0, 0, 1).normalize();
     scene.add(light);
 
     const animate = () => {
       animateIdRef.current = requestAnimationFrame(animate);
+      controls.update(); // ✅ 매 프레임마다 업데이트
       renderer.render(scene, camera);
     };
     animate();
