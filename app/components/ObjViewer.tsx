@@ -28,9 +28,8 @@ export default function ObjViewer({ objBlob }: ObjViewerProps) {
     renderer.setSize(width, height);
     container.appendChild(renderer.domElement);
 
-    // ✅ OrbitControls 연결
     const controls = new OrbitControls(camera, renderer.domElement);
-    controls.enableDamping = true; // 부드러운 회전
+    controls.enableDamping = true;
     controls.dampingFactor = 0.05;
 
     const light = new THREE.DirectionalLight(0xffffff, 1);
@@ -39,7 +38,7 @@ export default function ObjViewer({ objBlob }: ObjViewerProps) {
 
     const animate = () => {
       animateIdRef.current = requestAnimationFrame(animate);
-      controls.update(); // ✅ 매 프레임마다 업데이트
+      controls.update();
       renderer.render(scene, camera);
     };
     animate();
