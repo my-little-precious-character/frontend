@@ -20,7 +20,7 @@ export default function ObjViewer({ objBlob }: ObjViewerProps) {
     const { width, height } = container.getBoundingClientRect();
 
     const camera = new THREE.PerspectiveCamera(75, width / height, 0.1, 1000);
-    camera.position.z = 5;
+    camera.position.z = 10;
 
     const renderer = new THREE.WebGLRenderer({ antialias: true });
     renderer.setSize(width, height);
