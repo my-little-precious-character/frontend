@@ -13,35 +13,33 @@ export default function FbxViewer({ fbxBlob }: FbxViewerProps) {
   const mountRef = useRef<HTMLDivElement>(null);
   const modelRef = useRef<THREE.Object3D | null>(null);
   const animateIdRef = useRef<number | null>(null);
+  const cameraRef = useRef<THREE.PerspectiveCamera | null>(null);
+  const rendererRef = useRef<THREE.WebGLRenderer | null>(null);
 
   useEffect(() => {
     const container = mountRef.current!;
     const { width, height } = container.getBoundingClientRect();
 
-    // Scene
     const scene = new THREE.Scene();
     scene.background = new THREE.Color(0xffffff);
 
-    // Camera
     const camera = new THREE.PerspectiveCamera(75, width / height, 0.1, 1000);
     camera.position.z = 10;
+    cameraRef.current = camera;
 
-    // Renderer
     const renderer = new THREE.WebGLRenderer({ antialias: true });
     renderer.setSize(width, height);
     container.appendChild(renderer.domElement);
+    rendererRef.current = renderer;
 
-    // Controls
     const controls = new OrbitControls(camera, renderer.domElement);
     controls.enableDamping = true;
     controls.dampingFactor = 0.05;
 
-    // Lighting
     const light = new THREE.DirectionalLight(0xffffff, 1);
     light.position.set(0, 0, 1).normalize();
     scene.add(light);
 
-    // Animate
     const animate = () => {
       animateIdRef.current = requestAnimationFrame(animate);
       controls.update();
@@ -49,7 +47,6 @@ export default function FbxViewer({ fbxBlob }: FbxViewerProps) {
     };
     animate();
 
-    // Load FBX model
     const loader = new FBXLoader();
     const url = URL.createObjectURL(fbxBlob);
     loader.load(url, (fbx) => {
@@ -58,11 +55,21 @@ export default function FbxViewer({ fbxBlob }: FbxViewerProps) {
       modelRef.current = fbx;
     });
 
-    // Cleanup
+    const handleResize = () => {
+      if (!cameraRef.current || !rendererRef.current || !mountRef.current) return;
+      const { width, height } = mountRef.current.getBoundingClientRect();
+      cameraRef.current.aspect = width / height;
+      cameraRef.current.updateProjectionMatrix();
+      rendererRef.current.setSize(width, height);
+    };
+
+    window.addEventListener("resize", handleResize);
+
     return () => {
       if (animateIdRef.current) cancelAnimationFrame(animateIdRef.current);
       renderer.dispose();
       container.removeChild(renderer.domElement);
+      window.removeEventListener("resize", handleResize);
       URL.revokeObjectURL(url);
     };
   }, [fbxBlob]);
