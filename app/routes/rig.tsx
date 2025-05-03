@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import type { Route } from "./+types/home";
-import { useLocation } from "react-router";
+import { Link, useLocation } from "react-router";
 import FbxViewer from "~/components/FbxViewer";
 
 export function meta({ }: Route.MetaArgs) {
@@ -147,10 +147,17 @@ export default function Generate() {
               <a
                 href={URL.createObjectURL(fbxFileBlob)}
                 download="model.fbx"
-                className="bg-orange-600 text-white px-4 py-2 rounded hover:bg-orange-700"
+                className="bg-gray-200 text-gray-800 px-4 py-2 rounded hover:bg-gray-300 transition"
               >
                 .fbx 파일 다운로드
               </a>
+              <Link
+                to="/preview"
+                state={{ fbxFileBlob }}
+                className="bg-orange-600 text-white px-4 py-2 rounded hover:bg-orange-700 transition"
+              >
+                미리보기 →
+              </Link>
             </div>
           )}
         </div>
