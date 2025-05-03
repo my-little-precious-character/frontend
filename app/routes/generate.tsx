@@ -99,7 +99,13 @@ export default function Generate() {
     <main className="flex h-screen bg-gray-100 text-gray-800 font-sans">
       {/* 왼쪽 패널 */}
       <div className="w-1/2 flex items-center justify-center bg-white">
-        <div className="animate-spin rounded-full h-12 w-12 border-4 border-gray-300 border-t-orange-600" />
+        {!objFileBlob ? (
+          <div className="animate-spin rounded-full h-12 w-12 border-4 border-gray-300 border-t-orange-600" />
+        ) : (
+          <div className="p-4 bg-gray-100 rounded max-h-[80vh] overflow-auto text-sm whitespace-pre-wrap">
+            짠  {/* TODO: Draw obj */}
+          </div>
+        )}
       </div>
 
       {/* 오른쪽 패널 */}
@@ -135,26 +141,39 @@ export default function Generate() {
 
         {/* 진행 상황 */}
         <div className="flex flex-1 flex-col justify-center items-center space-y-8">
-          <div className="w-full max-w-md text-center space-y-4">
-            <h2 className="text-xl font-semibold text-gray-700">
-              모델 생성 중...
-            </h2>
+          {!objFileBlob ? (
+            <div className="w-full max-w-md text-center space-y-4">
+              <h2 className="text-xl font-semibold text-gray-700">
+                모델 생성 중...
+              </h2>
 
-            <div className="w-full bg-white h-4 rounded-full overflow-hidden border border-gray-300">
-              <div
-                className="h-full bg-orange-600 transition-all"
-                style={{ width: `${progress}%` }}
-              />
-            </div>
+              <div className="w-full bg-white h-4 rounded-full overflow-hidden border border-gray-300">
+                <div
+                  className="h-full bg-orange-600 transition-all"
+                  style={{ width: `${progress}%` }}
+                />
+              </div>
 
-            <p className="text-sm font-medium text-gray-700">
-              진행률: {progress}%
-            </p>
-            {/* TODO: 진행률이 나은지 남은시간이 나은지 비교해서 반영하기 */}
-            {/* <p className="text-sm font-medium text-gray-700">
+              <p className="text-sm font-medium text-gray-700">
+                진행률: {progress}%
+              </p>
+              {/* TODO: 진행률이 나은지 남은시간이 나은지 비교해서 반영하기 */}
+              {/* <p className="text-sm font-medium text-gray-700">
               남은 시간: {minutes}분 {seconds}초
             </p> */}
-          </div>
+            </div>
+          ) : (
+            <div className="flex flex-col items-center justify-center h-full space-y-4">
+              <h2 className="text-xl font-semibold text-gray-700">모델 생성 완료!</h2>
+              <a
+                href={URL.createObjectURL(objFileBlob)}
+                download="model.obj"
+                className="bg-orange-600 text-white px-4 py-2 rounded hover:bg-orange-700"
+              >
+                .obj 파일 다운로드
+              </a>
+            </div>
+          )}
         </div>
       </div>
     </main>
