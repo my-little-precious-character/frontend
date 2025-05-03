@@ -1,0 +1,71 @@
+import { useEffect, useRef } from "react";
+import * as THREE from "three";
+// @ts-ignore
+import { FBXLoader } from "three/examples/jsm/loaders/FBXLoader";
+// @ts-ignore
+import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
+
+interface FbxViewerProps {
+  fbxBlob: Blob;
+}
+
+export default function FbxViewer({ fbxBlob }: FbxViewerProps) {
+  const mountRef = useRef<HTMLDivElement>(null);
+  const modelRef = useRef<THREE.Object3D | null>(null);
+  const animateIdRef = useRef<number | null>(null);
+
+  useEffect(() => {
+    const container = mountRef.current!;
+    const { width, height } = container.getBoundingClientRect();
+
+    // Scene
+    const scene = new THREE.Scene();
+    scene.background = new THREE.Color(0xffffff);
+
+    // Camera
+    const camera = new THREE.PerspectiveCamera(75, width / height, 0.1, 1000);
+    camera.position.z = 10;
+
+    // Renderer
+    const renderer = new THREE.WebGLRenderer({ antialias: true });
+    renderer.setSize(width, height);
+    container.appendChild(renderer.domElement);
+
+    // Controls
+    const controls = new OrbitControls(camera, renderer.domElement);
+    controls.enableDamping = true;
+    controls.dampingFactor = 0.05;
+
+    // Lighting
+    const light = new THREE.DirectionalLight(0xffffff, 1);
+    light.position.set(0, 0, 1).normalize();
+    scene.add(light);
+
+    // Animate
+    const animate = () => {
+      animateIdRef.current = requestAnimationFrame(animate);
+      controls.update();
+      renderer.render(scene, camera);
+    };
+    animate();
+
+    // Load FBX model
+    const loader = new FBXLoader();
+    const url = URL.createObjectURL(fbxBlob);
+    loader.load(url, (fbx) => {
+      if (modelRef.current) scene.remove(modelRef.current);
+      scene.add(fbx);
+      modelRef.current = fbx;
+    });
+
+    // Cleanup
+    return () => {
+      if (animateIdRef.current) cancelAnimationFrame(animateIdRef.current);
+      renderer.dispose();
+      container.removeChild(renderer.domElement);
+      URL.revokeObjectURL(url);
+    };
+  }, [fbxBlob]);
+
+  return <div ref={mountRef} className="w-full h-full" />;
+}

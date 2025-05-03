@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import type { Route } from "./+types/home";
 import { useLocation } from "react-router";
+import FbxViewer from "~/components/FbxViewer";
 
 export function meta({ }: Route.MetaArgs) {
   return [
@@ -79,7 +80,11 @@ export default function Generate() {
     <main className="flex h-screen bg-gray-100 text-gray-800 font-sans">
       {/* 왼쪽 패널 */}
       <div className="w-1/2 flex items-center justify-center bg-white">
-        <div className="animate-spin rounded-full h-12 w-12 border-4 border-gray-300 border-t-orange-600" />
+        {!fbxFileBlob ? (
+          <div className="animate-spin rounded-full h-12 w-12 border-4 border-gray-300 border-t-orange-600" />
+        ) : (
+          <FbxViewer fbxBlob={fbxFileBlob} />
+        )}
       </div>
 
       {/* 오른쪽 패널 */}
