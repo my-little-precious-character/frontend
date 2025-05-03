@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import type { Route } from "./+types/home";
 import { useSearchParams } from "react-router";
+import ObjViewer from "~/components/ObjViewer";
 
 export function meta({ }: Route.MetaArgs) {
   return [
@@ -102,9 +103,7 @@ export default function Generate() {
         {!objFileBlob ? (
           <div className="animate-spin rounded-full h-12 w-12 border-4 border-gray-300 border-t-orange-600" />
         ) : (
-          <div className="p-4 bg-gray-100 rounded max-h-[80vh] overflow-auto text-sm whitespace-pre-wrap">
-            짠  {/* TODO: Draw obj */}
-          </div>
+          <ObjViewer objBlob={objFileBlob} />
         )}
       </div>
 
