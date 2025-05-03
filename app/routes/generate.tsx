@@ -16,7 +16,9 @@ export default function Generate() {
   const [searchParams] = useSearchParams();
   const prompt = searchParams.get("prompt");
   const hasStartedRef = useRef(false);
+  const [objFileBlob, setObjFileBlob] = useState<Blob | null>(null);
 
+  // Request generating 3D object
   useEffect(() => {
     // 한 번만 실행되도록
     if (hasStartedRef.current) return;
@@ -24,6 +26,8 @@ export default function Generate() {
 
     async function startTask() {
       if (prompt) {
+        // Request with text
+
         const formData = new URLSearchParams();
         formData.append("prompt", prompt);
 
@@ -37,6 +41,9 @@ export default function Generate() {
         const data = await res.json();
         setTaskId(data.task_id);
       } else {
+        // Request with image
+
+        // Input image
         const fileInput = document.createElement("input");
         fileInput.type = "file";
         fileInput.accept = "image/*";
@@ -59,6 +66,7 @@ export default function Generate() {
     startTask();
   }, []);
 
+  // Connect websocket
   useEffect(() => {
     if (!taskId) return;
 
@@ -74,6 +82,13 @@ export default function Generate() {
       } else if (status.includes("done")) {
         setProgress(100);
         ws.close();
+
+        // Download and save generated 3D object
+        fetch(`${API_BASE}/image-to-3d?task_id=${taskId}`)
+          .then(res => res.blob())
+          .then(blob => {
+            setObjFileBlob(blob);
+          })
       }
     };
     ws.onerror = () => ws.close();
