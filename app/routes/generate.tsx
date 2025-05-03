@@ -52,7 +52,7 @@ export default function Generate() {
     }
 
     startTask();
-  });
+  }, []);
 
   useEffect(() => {
     if (!taskId) return;
