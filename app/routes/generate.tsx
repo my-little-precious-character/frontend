@@ -22,7 +22,7 @@ export default function Generate() {
         const formData = new URLSearchParams();
         formData.append("prompt", prompt);
 
-        const res = await fetch(`${API_BASE}/text-to-3d/test`, {
+        const res = await fetch(`${API_BASE}/text-to-3d?mode=test`, {
           method: "POST",
           headers: {
             "Content-Type": "application/x-www-form-urlencoded",
@@ -40,7 +40,7 @@ export default function Generate() {
           const formData = new FormData();
           formData.append("file", fileInput.files[0]);
 
-          const res = await fetch(`${API_BASE}/image-to-3d/test`, {
+          const res = await fetch(`${API_BASE}/image-to-3d?mode=test`, {
             method: "POST",
             body: formData,
           });
