@@ -20,11 +20,6 @@ export default function Home() {
     console.log("Generating with image");
   };
 
-  const handleUpload = () => {
-    // 업로드 로직
-    console.log("Uploading image...");
-  };
-
   return (
     <main className="flex h-screen bg-gray-100 text-gray-800 font-sans">
       {/* 왼쪽 패널 */}
@@ -73,7 +68,7 @@ export default function Home() {
             이미지로 3D 모델 제작
           </h2>
           <button
-            onClick={handleUpload}
+            onClick={handleGenerateWithImage}
             className="w-full bg-orange-600 hover:bg-orange-700 text-white py-2 rounded-lg transition font-medium"
           >
             이미지 업로드
