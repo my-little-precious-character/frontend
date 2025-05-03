@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import type { Route } from "./+types/home";
-import { useLocation, useSearchParams } from "react-router";
+import { useLocation } from "react-router";
 
 export function meta({ }: Route.MetaArgs) {
   return [
@@ -31,7 +31,7 @@ export default function Generate() {
         return;
       }
 
-      const formData = new URLSearchParams();
+      const formData = new FormData();
       formData.append("file", objFileBlob);
 
       const res = await fetch(`${API_BASE}/rigging?mode=test`, {
