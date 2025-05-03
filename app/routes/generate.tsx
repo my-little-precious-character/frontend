@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import type { Route } from "./+types/home";
+import { useSearchParams } from "react-router";
 
 export function meta({ }: Route.MetaArgs) {
   return [
@@ -9,24 +10,49 @@ export function meta({ }: Route.MetaArgs) {
 
 export default function Generate() {
   const [progress, setProgress] = useState(0);
-  const totalSeconds = 10;
+  const [taskId, setTaskId] = useState<string | null>(null);
+  const [searchParams] = useSearchParams();
+  const prompt = searchParams.get("prompt");
 
-  // TODO: websocket 연결
   useEffect(() => {
-    const interval = setInterval(() => {
-      setProgress((prev) => {
-        if (prev >= 100) {
-          clearInterval(interval);
-          return 100;
-        }
-        return prev + 1;
-      });
-    }, (totalSeconds * 10));
+    async function startTask() {
+      if (prompt) {
+        const formData = new URLSearchParams();
+        formData.append("prompt", prompt);
 
-    return () => clearInterval(interval);
-  }, []);
+        const res = await fetch("/text-to-3d/test", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/x-www-form-urlencoded",
+          },
+          body: formData.toString(),
+        });
+        const data = await res.json();
+        setTaskId(data.taskId);
+      } else {
+        const fileInput = document.createElement("input");
+        fileInput.type = "file";
+        fileInput.accept = "image/*";
+        fileInput.onchange = async () => {
+          if (!fileInput.files?.[0]) return;  // TODO: exception handling
+          const formData = new FormData();
+          formData.append("file", fileInput.files[0]);
 
-  const secondsLeft = Math.round((1 - progress / 100) * totalSeconds);
+          const res = await fetch("/image-to-3d/test", {
+            method: "POST",
+            body: formData,
+          });
+          const data = await res.json();
+          setTaskId(data.taskId);
+        };
+        fileInput.click();
+      }
+    }
+
+    startTask();
+  });
+
+  const secondsLeft = Math.round((1 - progress / 100) * 10);
   const minutes = Math.floor(secondsLeft / 60);
   const seconds = secondsLeft % 60;
 
