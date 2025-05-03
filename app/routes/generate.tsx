@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import type { Route } from "./+types/home";
 import { useSearchParams } from "react-router";
 
@@ -15,8 +15,13 @@ export default function Generate() {
   const [taskId, setTaskId] = useState<string | null>(null);
   const [searchParams] = useSearchParams();
   const prompt = searchParams.get("prompt");
+  const hasStartedRef = useRef(false);
 
   useEffect(() => {
+    // 한 번만 실행되도록
+    if (hasStartedRef.current) return;
+    hasStartedRef.current = true;
+
     async function startTask() {
       if (prompt) {
         const formData = new URLSearchParams();
