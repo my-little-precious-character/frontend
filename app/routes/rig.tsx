@@ -1,7 +1,8 @@
-import { useEffect, useRef, useState } from "react";
+import { lazy, Suspense, useEffect, useRef, useState } from "react";
 import type { Route } from "./+types/home";
 import { Link, useLocation } from "react-router";
-import FbxViewer from "~/components/FbxViewer";
+
+const FbxViewer = lazy(() => import("~/components/FbxViewer"));
 
 export function meta({ }: Route.MetaArgs) {
   return [
@@ -83,7 +84,9 @@ export default function Generate() {
         {!fbxFileBlob ? (
           <div className="animate-spin rounded-full h-12 w-12 border-4 border-gray-300 border-t-orange-600" />
         ) : (
-          <FbxViewer fbxBlob={fbxFileBlob} />
+          <Suspense fallback={<div className="animate-spin rounded-full h-12 w-12 border-4 border-gray-300 border-t-orange-600" />}>
+            <FbxViewer fbxBlob={fbxFileBlob} />
+          </Suspense>
         )}
       </div>
 

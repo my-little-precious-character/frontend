@@ -1,7 +1,8 @@
-import { useEffect, useRef, useState } from "react";
+import { lazy, Suspense, useEffect, useRef, useState } from "react";
 import type { Route } from "./+types/home";
 import { Link, useSearchParams } from "react-router";
-import ObjViewer from "~/components/ObjViewer";
+
+const ObjViewer = lazy(() => import("~/components/ObjViewer"));
 
 export function meta({ }: Route.MetaArgs) {
   return [
@@ -103,7 +104,9 @@ export default function Generate() {
         {!objFileBlob ? (
           <div className="animate-spin rounded-full h-12 w-12 border-4 border-gray-300 border-t-orange-600" />
         ) : (
-          <ObjViewer objBlob={objFileBlob} />
+          <Suspense fallback={<div className="animate-spin rounded-full h-12 w-12 border-4 border-gray-300 border-t-orange-600" />}>
+            <ObjViewer objBlob={objFileBlob} />
+          </Suspense>
         )}
       </div>
 
