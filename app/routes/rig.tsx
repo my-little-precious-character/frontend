@@ -28,21 +28,35 @@ export default function Generate() {
     hasStartedRef.current = true;
 
     async function startTask() {
-      if (!objFileBlob) {
-        console.error("objFileBlob not found"); // TODO: error handling
-        return;
+      if (objFileBlob) {
+        const formData = new FormData();
+        formData.append("file", objFileBlob);
+
+        const res = await fetch(`${API_BASE}/rigging?mode=test`, {
+          method: "POST",
+          body: formData,
+        });
+
+        const data = await res.json();
+      } else {
+        console.log("obj nok");
+        const fileInput = document.createElement("input");
+        fileInput.type = "file";
+        fileInput.accept = ".obj";
+        fileInput.onchange = async () => {
+          if (!fileInput.files?.[0]) return; // TODO: exception handling
+          const formData = new FormData();
+          formData.append("file", fileInput.files[0]);
+
+          const res = await fetch(`${API_BASE}/rigging?mode=test`, {
+            method: "POST",
+            body: formData,
+          });
+          const data = await res.json();
+          setTaskId(data.task_id);
+        };
+        fileInput.click();
       }
-
-      const formData = new FormData();
-      formData.append("file", objFileBlob);
-
-      const res = await fetch(`${API_BASE}/rigging?mode=test`, {
-        method: "POST",
-        body: formData,
-      });
-
-      const data = await res.json();
-      setTaskId(data.task_id);
     }
 
     startTask();
