@@ -23,6 +23,10 @@ export default function Generate() {
   const [mtlUrl, setMtlUrl] = useState<string | null>(null);
   const [albedoUrl, setAlbedoUrl] = useState<string | null>(null);
 
+  const [objBlob, setObjBlob] = useState<Blob | null>(null);
+  const [mtlBlob, setMtlBlob] = useState<Blob | null>(null);
+  const [albedoBlob, setAlbedoBlob] = useState<Blob | null>(null);
+
   // Request generating 3D object
   useEffect(() => {
     // 한 번만 실행되도록
@@ -88,9 +92,25 @@ export default function Generate() {
         setProgress(100);
         ws.close();
 
-        setObjUrl(`${API_BASE}/image-to-3d?task_id=${taskId}&type=obj`);
-        setMtlUrl(`${API_BASE}/image-to-3d?task_id=${taskId}&type=mtl`);
-        setAlbedoUrl(`${API_BASE}/image-to-3d?task_id=${taskId}&type=albedo`);
+        const objEndpoint = `${API_BASE}/image-to-3d?task_id=${taskId}&type=obj`;
+        const mtlEndpoint = `${API_BASE}/image-to-3d?task_id=${taskId}&type=mtl`;
+        const albedoEndpoint = `${API_BASE}/image-to-3d?task_id=${taskId}&type=albedo`;
+
+        setObjUrl(objEndpoint);
+        setMtlUrl(mtlEndpoint);
+        setAlbedoUrl(albedoEndpoint);
+
+        // Download generated object
+        Promise.all([
+          fetch(objEndpoint).then(res => res.blob()),
+          fetch(mtlEndpoint).then(res => res.blob()),
+          fetch(albedoEndpoint).then(res => res.blob()),
+        ])
+          .then(([objB, mtlB, albB]) => {
+            setObjBlob(objB);
+            setMtlBlob(mtlB);
+            setAlbedoBlob(albB);
+          });
       }
     };
     ws.onerror = () => ws.close();
@@ -177,7 +197,7 @@ export default function Generate() {
 
               <Link
                 to="/rig"
-                state={{ objUrl }}
+                state={{ objBlob, mtlBlob, albedoBlob }}
                 className="bg-orange-600 text-white px-4 py-2 rounded hover:bg-orange-700 transition"
               >
                 뼈대 생성하러 가기 →
