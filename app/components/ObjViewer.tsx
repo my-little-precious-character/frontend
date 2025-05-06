@@ -6,12 +6,12 @@ import { OBJLoader } from "three/examples/jsm/loaders/OBJLoader";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 
 interface ObjViewerProps {
-  objBlob: Blob;
-  mtlBlob: Blob;
+  objUrl: string;
+  mtlUrl: string;
   albedoUrl: string;
 }
 
-export default function ObjViewer({ objBlob, mtlBlob, albedoUrl }: ObjViewerProps) {
+export default function ObjViewer({ objUrl, mtlUrl, albedoUrl }: ObjViewerProps) {
   const mountRef = useRef<HTMLDivElement>(null);
   const modelRef = useRef<THREE.Object3D | null>(null);
   const animateIdRef = useRef<number | null>(null);
@@ -24,7 +24,6 @@ export default function ObjViewer({ objBlob, mtlBlob, albedoUrl }: ObjViewerProp
 
     const scene = new THREE.Scene();
     scene.background = new THREE.Color(0xffffff);
-
     const camera = new THREE.PerspectiveCamera(75, width / height, 0.1, 1000);
     camera.position.z = 10;
     cameraRef.current = camera;
@@ -49,22 +48,28 @@ export default function ObjViewer({ objBlob, mtlBlob, albedoUrl }: ObjViewerProp
     };
     animate();
 
-    const reader = new FileReader();
-    reader.onload = () => {
-      const objText = reader.result as string;
-      const loader = new OBJLoader();
-      const obj = loader.parse(objText);
-
-      if (modelRef.current) {
-        scene.remove(modelRef.current);
+    // Load OBJ from URL
+    const loader = new OBJLoader();
+    loader.load(
+      objUrl,
+      (obj) => {
+        // remove previous model
+        if (modelRef.current) {
+          scene.remove(modelRef.current);
+        }
+        scene.add(obj);
+        modelRef.current = obj;
+      },
+      (xhr) => {
+        // optional progress callback
+        // console.log(`${(xhr.loaded / xhr.total) * 100}% loaded`);
+      },
+      (error) => {
+        console.error("Error loading OBJ:", error);
       }
+    );
 
-      scene.add(obj);
-      modelRef.current = obj;
-    };
-    reader.readAsText(objBlob);
-
-    // Handle window resize
+    // Handle resizing
     const handleResize = () => {
       if (!cameraRef.current || !rendererRef.current || !mountRef.current) return;
       const { width, height } = mountRef.current.getBoundingClientRect();
@@ -76,14 +81,12 @@ export default function ObjViewer({ objBlob, mtlBlob, albedoUrl }: ObjViewerProp
     window.addEventListener("resize", handleResize);
 
     return () => {
-      if (animateIdRef.current) {
-        cancelAnimationFrame(animateIdRef.current);
-      }
+      if (animateIdRef.current) cancelAnimationFrame(animateIdRef.current);
+      window.removeEventListener("resize", handleResize);
       renderer.dispose();
       container.removeChild(renderer.domElement);
-      window.removeEventListener("resize", handleResize);
     };
-  }, [objBlob, mtlBlob, albedoUrl]);
+  }, [objUrl, mtlUrl, albedoUrl]);
 
   return <div ref={mountRef} className="w-full h-full" />;
 }

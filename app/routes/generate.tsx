@@ -19,8 +19,8 @@ export default function Generate() {
   const prompt = searchParams.get("prompt");
   const hasStartedRef = useRef(false);
 
-  const [objFileBlob, setObjFileBlob] = useState<Blob | null>(null);
-  const [mtlFileBlob, setMtlFileBlob] = useState<Blob | null>(null);
+  const [objUrl, setObjUrl] = useState<string | null>(null);
+  const [mtlUrl, setMtlUrl] = useState<string | null>(null);
   const [albedoUrl, setAlbedoUrl] = useState<string | null>(null);
 
   // Request generating 3D object
@@ -88,17 +88,8 @@ export default function Generate() {
         setProgress(100);
         ws.close();
 
-        // Download and save generated 3D object
-        fetch(`${API_BASE}/image-to-3d?task_id=${taskId}&type=obj`)
-          .then(res => res.blob())
-          .then(blob => {
-            setObjFileBlob(blob);
-          })
-        fetch(`${API_BASE}/image-to-3d?task_id=${taskId}&type=mtl`)
-          .then(res => res.blob())
-          .then(blob => {
-            setMtlFileBlob(blob);
-          })
+        setObjUrl(`${API_BASE}/image-to-3d?task_id=${taskId}&type=obj`);
+        setMtlUrl(`${API_BASE}/image-to-3d?task_id=${taskId}&type=mtl`);
         setAlbedoUrl(`${API_BASE}/image-to-3d?task_id=${taskId}&type=albedo`);
       }
     };
@@ -110,11 +101,11 @@ export default function Generate() {
     <main className="flex h-screen bg-gray-100 text-gray-800 font-sans">
       {/* 왼쪽 패널 */}
       <div className="w-1/2 flex items-center justify-center bg-white">
-        {!objFileBlob || !mtlFileBlob || !albedoUrl ? (
+        {!objUrl || !mtlUrl || !albedoUrl ? (
           <div className="animate-spin rounded-full h-12 w-12 border-4 border-gray-300 border-t-orange-600" />
         ) : (
           <Suspense fallback={<div className="animate-spin rounded-full h-12 w-12 border-4 border-gray-300 border-t-orange-600" />}>
-            <ObjViewer objBlob={objFileBlob} mtlBlob={mtlFileBlob} albedoUrl={albedoUrl} />
+            <ObjViewer objUrl={objUrl} mtlUrl={mtlUrl} albedoUrl={albedoUrl} />
           </Suspense>
         )}
       </div>
@@ -152,7 +143,7 @@ export default function Generate() {
 
         {/* 진행 상황 */}
         <div className="flex flex-1 flex-col justify-center items-center space-y-8">
-          {!objFileBlob ? (
+          {!objUrl ? (
             <div className="w-full max-w-md text-center space-y-4">
               <h2 className="text-xl font-semibold text-gray-700">
                 모델 생성 중...
@@ -177,7 +168,7 @@ export default function Generate() {
             <div className="flex flex-col items-center justify-center h-full space-y-4">
               <h2 className="text-xl font-semibold text-gray-700">모델 생성 완료!</h2>
               <a
-                href={URL.createObjectURL(objFileBlob)}
+                href={objUrl}
                 download="model.obj"
                 className="bg-gray-200 text-gray-800 px-4 py-2 rounded hover:bg-gray-300 transition"
               >
@@ -186,7 +177,7 @@ export default function Generate() {
 
               <Link
                 to="/rig"
-                state={{ objFileBlob }}
+                state={{ objUrl }}
                 className="bg-orange-600 text-white px-4 py-2 rounded hover:bg-orange-700 transition"
               >
                 뼈대 생성하러 가기 →
