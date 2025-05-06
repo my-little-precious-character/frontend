@@ -18,7 +18,10 @@ export default function Generate() {
   const [searchParams] = useSearchParams();
   const prompt = searchParams.get("prompt");
   const hasStartedRef = useRef(false);
+
   const [objFileBlob, setObjFileBlob] = useState<Blob | null>(null);
+  const [mtlFileBlob, setMtlFileBlob] = useState<Blob | null>(null);
+  const [albedoFileBlob, setAlbedoFileBlob] = useState<Blob | null>(null);
 
   // Request generating 3D object
   useEffect(() => {
@@ -86,10 +89,20 @@ export default function Generate() {
         ws.close();
 
         // Download and save generated 3D object
-        fetch(`${API_BASE}/image-to-3d?task_id=${taskId}`)
+        fetch(`${API_BASE}/image-to-3d?task_id=${taskId}&type=obj`)
           .then(res => res.blob())
           .then(blob => {
             setObjFileBlob(blob);
+          })
+        fetch(`${API_BASE}/image-to-3d?task_id=${taskId}&type=mtl`)
+          .then(res => res.blob())
+          .then(blob => {
+            setMtlFileBlob(blob);
+          })
+        fetch(`${API_BASE}/image-to-3d?task_id=${taskId}&type=albedo`)
+          .then(res => res.blob())
+          .then(blob => {
+            setAlbedoFileBlob(blob);
           })
       }
     };
