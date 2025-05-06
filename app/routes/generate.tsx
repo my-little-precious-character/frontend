@@ -114,11 +114,11 @@ export default function Generate() {
     <main className="flex h-screen bg-gray-100 text-gray-800 font-sans">
       {/* 왼쪽 패널 */}
       <div className="w-1/2 flex items-center justify-center bg-white">
-        {!objFileBlob ? (
+        {!objFileBlob || !mtlFileBlob || !albedoFileBlob ? (
           <div className="animate-spin rounded-full h-12 w-12 border-4 border-gray-300 border-t-orange-600" />
         ) : (
           <Suspense fallback={<div className="animate-spin rounded-full h-12 w-12 border-4 border-gray-300 border-t-orange-600" />}>
-            <ObjViewer objBlob={objFileBlob} />
+            <ObjViewer objBlob={objFileBlob} mtlBlob={mtlFileBlob} albedoBlob={albedoFileBlob} />
           </Suspense>
         )}
       </div>
