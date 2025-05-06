@@ -31,7 +31,7 @@ function Model({ objUrl, mtlUrl, albedoUrl }: ObjViewerProps) {
 
   // Override mesh materials with albedo texture
   useEffect(() => {
-    obj.traverse(child => {
+    obj.traverse((child: any) => {
       if ((child as any).isMesh) {
         (child as any).material = new MeshStandardMaterial({
           map: albedoTexture,
