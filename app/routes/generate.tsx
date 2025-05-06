@@ -197,7 +197,7 @@ export default function Generate() {
 
               <Link
                 to="/rig"
-                state={{ objBlob, mtlBlob, albedoBlob }}
+                state={{ objBlob, mtlBlob, albedoBlob, taskId }}
                 className="bg-orange-600 text-white px-4 py-2 rounded hover:bg-orange-700 transition"
               >
                 뼈대 생성하러 가기 →

@@ -17,6 +17,7 @@ export default function Generate() {
   const objBlob = location.state?.objBlob;
   const mtlBlob = location.state?.mtlBlob;
   const albedoBlob = location.state?.albedoBlob;
+  const prevTaskId = location.state?.taskId;
 
   const [progress, setProgress] = useState(0);
   const [taskId, setTaskId] = useState<string | null>(null);
@@ -35,6 +36,7 @@ export default function Generate() {
         formData.append("obj", objBlob);
         formData.append("mtl", mtlBlob);
         formData.append("albedo", albedoBlob);
+        formData.append("prev_task_id", prevTaskId);
 
         const res = await fetch(`${API_BASE}/rigging?mode=test`, {
           method: "POST",
