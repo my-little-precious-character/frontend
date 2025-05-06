@@ -16,7 +16,6 @@ interface ObjViewerProps {
 function Model({ objUrl, mtlUrl, albedoUrl }: ObjViewerProps) {
   // Load materials if provided
   const materials = useLoader(MTLLoader, mtlUrl);
-  materials.preload();
 
   // Load albedo texture if provided
   const albedoTexture = useLoader(TextureLoader, albedoUrl);
@@ -32,18 +31,16 @@ function Model({ objUrl, mtlUrl, albedoUrl }: ObjViewerProps) {
 
   // Override mesh materials with albedo texture
   useEffect(() => {
-    if (obj && albedoTexture) {
-      obj.traverse(child => {
-        if ((child as any).isMesh) {
-          (child as any).material = new MeshStandardMaterial({
-            map: albedoTexture,
-            color: (child as any).material.color || undefined,
-            metalness: (child as any).material.metalness || 0,
-            roughness: (child as any).material.roughness || 1
-          });
-        }
-      });
-    }
+    obj.traverse(child => {
+      if ((child as any).isMesh) {
+        (child as any).material = new MeshStandardMaterial({
+          map: albedoTexture,
+          color: (child as any).material.color || undefined,
+          metalness: (child as any).material.metalness || 0,
+          roughness: (child as any).material.roughness || 1
+        });
+      }
+    });
   }, [obj, albedoTexture]);
 
   return <primitive object={obj} dispose={null} />;
