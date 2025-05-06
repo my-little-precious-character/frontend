@@ -16,7 +16,7 @@ export default function Generate() {
   const location = useLocation();
   const objBlob = location.state?.objBlob;
   const mtlBlob = location.state?.mtlBlob;
-  const albegoBlob = location.state?.albedoBlob;
+  const albedoBlob = location.state?.albedoBlob;
 
   const [progress, setProgress] = useState(0);
   const [taskId, setTaskId] = useState<string | null>(null);
@@ -32,7 +32,9 @@ export default function Generate() {
     async function startTask() {
       if (objBlob) {
         const formData = new FormData();
-        formData.append("file", objBlob);
+        formData.append("obj", objBlob);
+        formData.append("mtl", mtlBlob);
+        formData.append("albedo", albedoBlob);
 
         const res = await fetch(`${API_BASE}/rigging?mode=test`, {
           method: "POST",
