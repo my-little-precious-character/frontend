@@ -27,6 +27,10 @@ export default function Generate() {
   const [mtlBlob, setMtlBlob] = useState<Blob | null>(null);
   const [albedoBlob, setAlbedoBlob] = useState<Blob | null>(null);
 
+  const [objFilename, setObjFilename] = useState<String | null>(null);
+  const [mtlFilename, setMtlFilename] = useState<String | null>(null);
+  const [albedoFilename, setAlbedoFilename] = useState<String | null>(null);
+
   // Request generating 3D object
   useEffect(() => {
     // 한 번만 실행되도록
@@ -99,6 +103,10 @@ export default function Generate() {
         setObjUrl(objEndpoint);
         setMtlUrl(mtlEndpoint);
         setAlbedoUrl(albedoEndpoint);
+
+        setObjFilename(`${taskId}_mesh.obj`)
+        setMtlFilename(`${taskId}_mesh.mtl`)
+        setAlbedoFilename(`${taskId}_mesh_albedo.png`)
 
         // Download generated object
         Promise.all([
@@ -197,7 +205,7 @@ export default function Generate() {
 
               <Link
                 to="/rig"
-                state={{ objBlob, mtlBlob, albedoBlob }}
+                state={{ objBlob, mtlBlob, albedoBlob, objFilename, mtlFilename, albedoFilename }}
                 className="bg-orange-600 text-white px-4 py-2 rounded hover:bg-orange-700 transition"
               >
                 뼈대 생성하러 가기 →
