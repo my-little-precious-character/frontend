@@ -83,7 +83,7 @@ export default function ObjViewer({ objBlob, mtlBlob, albedoUrl }: ObjViewerProp
       container.removeChild(renderer.domElement);
       window.removeEventListener("resize", handleResize);
     };
-  }, [objBlob]);
+  }, [objBlob, mtlBlob, albedoUrl]);
 
   return <div ref={mountRef} className="w-full h-full" />;
 }
