@@ -8,10 +8,10 @@ import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 interface ObjViewerProps {
   objBlob: Blob;
   mtlBlob: Blob;
-  albedoBlob: Blob;
+  albedoUrl: string;
 }
 
-export default function ObjViewer({ objBlob, mtlBlob, albedoBlob }: ObjViewerProps) {
+export default function ObjViewer({ objBlob, mtlBlob, albedoUrl }: ObjViewerProps) {
   const mountRef = useRef<HTMLDivElement>(null);
   const modelRef = useRef<THREE.Object3D | null>(null);
   const animateIdRef = useRef<number | null>(null);

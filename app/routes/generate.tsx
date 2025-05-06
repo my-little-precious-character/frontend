@@ -21,7 +21,7 @@ export default function Generate() {
 
   const [objFileBlob, setObjFileBlob] = useState<Blob | null>(null);
   const [mtlFileBlob, setMtlFileBlob] = useState<Blob | null>(null);
-  const [albedoFileBlob, setAlbedoFileBlob] = useState<Blob | null>(null);
+  const [albedoUrl, setAlbedoUrl] = useState<string | null>(null);
 
   // Request generating 3D object
   useEffect(() => {
@@ -99,11 +99,7 @@ export default function Generate() {
           .then(blob => {
             setMtlFileBlob(blob);
           })
-        fetch(`${API_BASE}/image-to-3d?task_id=${taskId}&type=albedo`)
-          .then(res => res.blob())
-          .then(blob => {
-            setAlbedoFileBlob(blob);
-          })
+        setAlbedoUrl(`${API_BASE}/image-to-3d?task_id=${taskId}&type=albedo`);
       }
     };
     ws.onerror = () => ws.close();
@@ -114,11 +110,11 @@ export default function Generate() {
     <main className="flex h-screen bg-gray-100 text-gray-800 font-sans">
       {/* 왼쪽 패널 */}
       <div className="w-1/2 flex items-center justify-center bg-white">
-        {!objFileBlob || !mtlFileBlob || !albedoFileBlob ? (
+        {!objFileBlob || !mtlFileBlob || !albedoUrl ? (
           <div className="animate-spin rounded-full h-12 w-12 border-4 border-gray-300 border-t-orange-600" />
         ) : (
           <Suspense fallback={<div className="animate-spin rounded-full h-12 w-12 border-4 border-gray-300 border-t-orange-600" />}>
-            <ObjViewer objBlob={objFileBlob} mtlBlob={mtlFileBlob} albedoBlob={albedoFileBlob} />
+            <ObjViewer objBlob={objFileBlob} mtlBlob={mtlFileBlob} albedoUrl={albedoUrl} />
           </Suspense>
         )}
       </div>
