@@ -1,92 +1,31 @@
-import { useEffect, useRef } from "react";
-import * as THREE from "three";
+import React, { Suspense } from 'react'
+import { Canvas } from '@react-three/fiber'
+import { OrbitControls, Preload } from '@react-three/drei'
+import { useLoader } from '@react-three/fiber'
 // @ts-ignore
-import { OBJLoader } from "three/examples/jsm/loaders/OBJLoader";
-// @ts-ignore
-import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
+import { OBJLoader } from 'three/examples/jsm/loaders/OBJLoader'
 
 interface ObjViewerProps {
-  objUrl: string;
-  mtlUrl: string;
-  albedoUrl: string;
+  objUrl: string;     // e.g. "http://localhost:8000/result/ID_mesh.obj"
+  mtlUrl: string;     // e.g. "http://localhost:8000/result/ID_mesh.mtl"
+  albedoUrl: string;  // e.g. "http://localhost:8000/result/ID_mesh_albedo.png"
+}
+
+function Model({ objUrl }) {
+  const obj = useLoader(OBJLoader, objUrl)
+  return <primitive object={obj} dispose={null} />
 }
 
 export default function ObjViewer({ objUrl, mtlUrl, albedoUrl }: ObjViewerProps) {
-  const mountRef = useRef<HTMLDivElement>(null);
-  const modelRef = useRef<THREE.Object3D | null>(null);
-  const animateIdRef = useRef<number | null>(null);
-  const cameraRef = useRef<THREE.PerspectiveCamera | null>(null);
-  const rendererRef = useRef<THREE.WebGLRenderer | null>(null);
-
-  useEffect(() => {
-    const container = mountRef.current!;
-    const { width, height } = container.getBoundingClientRect();
-
-    const scene = new THREE.Scene();
-    scene.background = new THREE.Color(0xffffff);
-    const camera = new THREE.PerspectiveCamera(75, width / height, 0.1, 1000);
-    camera.position.z = 10;
-    cameraRef.current = camera;
-
-    const renderer = new THREE.WebGLRenderer({ antialias: true });
-    renderer.setSize(width, height);
-    container.appendChild(renderer.domElement);
-    rendererRef.current = renderer;
-
-    const controls = new OrbitControls(camera, renderer.domElement);
-    controls.enableDamping = true;
-    controls.dampingFactor = 0.05;
-
-    const light = new THREE.DirectionalLight(0xffffff, 1);
-    light.position.set(0, 0, 1).normalize();
-    scene.add(light);
-
-    const animate = () => {
-      animateIdRef.current = requestAnimationFrame(animate);
-      controls.update();
-      renderer.render(scene, camera);
-    };
-    animate();
-
-    // Load OBJ from URL
-    const loader = new OBJLoader();
-    loader.load(
-      objUrl,
-      (obj) => {
-        // remove previous model
-        if (modelRef.current) {
-          scene.remove(modelRef.current);
-        }
-        scene.add(obj);
-        modelRef.current = obj;
-      },
-      (xhr) => {
-        // optional progress callback
-        // console.log(`${(xhr.loaded / xhr.total) * 100}% loaded`);
-      },
-      (error) => {
-        console.error("Error loading OBJ:", error);
-      }
-    );
-
-    // Handle resizing
-    const handleResize = () => {
-      if (!cameraRef.current || !rendererRef.current || !mountRef.current) return;
-      const { width, height } = mountRef.current.getBoundingClientRect();
-      cameraRef.current.aspect = width / height;
-      cameraRef.current.updateProjectionMatrix();
-      rendererRef.current.setSize(width, height);
-    };
-
-    window.addEventListener("resize", handleResize);
-
-    return () => {
-      if (animateIdRef.current) cancelAnimationFrame(animateIdRef.current);
-      window.removeEventListener("resize", handleResize);
-      renderer.dispose();
-      container.removeChild(renderer.domElement);
-    };
-  }, [objUrl, mtlUrl, albedoUrl]);
-
-  return <div ref={mountRef} className="w-full h-full" />;
+  return (
+    <Canvas camera={{ position: [0, 0, 5] }}>
+      <ambientLight intensity={0.5} />
+      <directionalLight position={[5, 5, 5]} />
+      <Suspense fallback={null}>
+        <Model objUrl={objUrl} />
+        <Preload all />
+      </Suspense>
+      <OrbitControls />
+    </Canvas>
+  )
 }
