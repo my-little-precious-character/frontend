@@ -62,7 +62,7 @@ export default function Generate() {
           const formData = new FormData();
           formData.append("file", fileInput.files[0]);
 
-          const res = await fetch(`${API_BASE}/image-to-3d?mode=test`, {
+          const res = await fetch(`${API_BASE}/image-to-3d?mode=${DREAMGAUSSIAN_MODE}`, {
             method: "POST",
             body: formData,
           });
