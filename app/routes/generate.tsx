@@ -12,6 +12,7 @@ export function meta({ }: Route.MetaArgs) {
 
 export default function Generate() {
   const API_BASE = import.meta.env.VITE_DREAMGAUSSIAN_URL;
+  const DREAMGAUSSIAN_MODE = import.meta.env.VITE_DREAMGAUSSIAN_MODE;
 
   const [progress, setProgress] = useState(0);
   const [taskId, setTaskId] = useState<string | null>(null);
@@ -40,7 +41,7 @@ export default function Generate() {
         const formData = new URLSearchParams();
         formData.append("prompt", prompt);
 
-        const res = await fetch(`${API_BASE}/text-to-3d?mode=test`, {
+        const res = await fetch(`${API_BASE}/text-to-3d?mode=${DREAMGAUSSIAN_MODE}`, {
           method: "POST",
           headers: {
             "Content-Type": "application/x-www-form-urlencoded",
