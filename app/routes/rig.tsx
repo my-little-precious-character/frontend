@@ -12,6 +12,7 @@ export function meta({ }: Route.MetaArgs) {
 
 export default function Generate() {
   const API_BASE = import.meta.env.VITE_RIGNET_URL;
+  const RIGNET_MODE = import.meta.env.VITE_RIGNET_MODE;
 
   const location = useLocation();
   const objBlob = location.state?.objBlob;
@@ -38,7 +39,7 @@ export default function Generate() {
         formData.append("albedo", albedoBlob);
         formData.append("prev_task_id", prevTaskId);
 
-        const res = await fetch(`${API_BASE}/rigging?mode=test`, {
+        const res = await fetch(`${API_BASE}/rigging?mode=${RIGNET_MODE}`, {
           method: "POST",
           body: formData,
         });
