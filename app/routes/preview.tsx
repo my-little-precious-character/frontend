@@ -11,7 +11,7 @@ export function meta({ }: Route.MetaArgs) {
 
 export default function Generate() {
   const location = useLocation();
-  const fbxFileBlob = location.state?.fbxFileBlob;
+  const fbxUrl = location.state?.fbxUrl;
 
   return (
     <main className="flex h-screen bg-gray-100 text-gray-800 font-sans">
@@ -55,7 +55,7 @@ export default function Generate() {
           <div className="flex flex-col items-center justify-center h-full space-y-4">
             <h2 className="text-xl font-semibold text-gray-700">캐릭터 생성 완료!</h2>
             <a
-              href={URL.createObjectURL(fbxFileBlob)}
+              href={fbxUrl}
               download="model.fbx"
               className="bg-orange-600 text-white px-4 py-2 rounded hover:bg-orange-700"
             >
