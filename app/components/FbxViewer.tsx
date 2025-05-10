@@ -21,14 +21,15 @@ export default function FbxViewer({ fbxBlob }: FbxViewerProps) {
     const { width, height } = container.getBoundingClientRect();
 
     const scene = new THREE.Scene();
-    scene.background = new THREE.Color(0xffffff);
+    scene.background = new THREE.Color(0xf0f0f0);
 
     const camera = new THREE.PerspectiveCamera(75, width / height, 0.1, 1000);
-    camera.position.z = 150;
+    camera.position.set(100, 100, 200);
     cameraRef.current = camera;
 
     const renderer = new THREE.WebGLRenderer({ antialias: true });
     renderer.setSize(width, height);
+    renderer.shadowMap.enabled = true;
     container.appendChild(renderer.domElement);
     rendererRef.current = renderer;
 
@@ -36,9 +37,30 @@ export default function FbxViewer({ fbxBlob }: FbxViewerProps) {
     controls.enableDamping = true;
     controls.dampingFactor = 0.05;
 
-    const light = new THREE.DirectionalLight(0xffffff, 1);
-    light.position.set(0, 0, 1).normalize();
-    scene.add(light);
+    // Ambient light (soft, omnidirectional)
+    const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
+    scene.add(ambientLight);
+
+    // Directional light (strong shadows, main light source)
+    const directionalLight = new THREE.DirectionalLight(0xffffff, 1.2);
+    directionalLight.position.set(50, 150, 100);
+    directionalLight.castShadow = true;
+    directionalLight.shadow.mapSize.width = 2048;
+    directionalLight.shadow.mapSize.height = 2048;
+    scene.add(directionalLight);
+
+    // Hemisphere light (more natural outdoor feel)
+    const hemisphereLight = new THREE.HemisphereLight(0xaaaaaa, 0x444444, 0.6);
+    hemisphereLight.position.set(0, 200, 0);
+    scene.add(hemisphereLight);
+
+    // Soft shadow settings
+    directionalLight.shadow.camera.near = 0.1;
+    directionalLight.shadow.camera.far = 500;
+    directionalLight.shadow.camera.left = -200;
+    directionalLight.shadow.camera.right = 200;
+    directionalLight.shadow.camera.top = 200;
+    directionalLight.shadow.camera.bottom = -200;
 
     const animate = () => {
       animateIdRef.current = requestAnimationFrame(animate);
@@ -51,6 +73,12 @@ export default function FbxViewer({ fbxBlob }: FbxViewerProps) {
     const url = URL.createObjectURL(fbxBlob);
     loader.load(url, (fbx) => {
       if (modelRef.current) scene.remove(modelRef.current);
+      fbx.traverse((child) => {
+        if (child instanceof THREE.Mesh) {
+          child.castShadow = true;
+          child.receiveShadow = true;
+        }
+      });
       scene.add(fbx);
       modelRef.current = fbx;
     });
