@@ -11,16 +11,6 @@ export function meta({ }: Route.MetaArgs) {
 export default function Home() {
   const [prompt, setPrompt] = useState("");
 
-  const handleGenerateWithText = () => {
-    // 생성 로직
-    console.log("Generating with prompt:", prompt);
-  };
-
-  const handleGenerateWithImage = () => {
-    // 생성 로직
-    console.log("Generating with image");
-  };
-
   return (
     <main className="flex h-screen bg-gray-100 text-gray-800 font-sans">
       {/* 왼쪽 패널 */}
