@@ -30,9 +30,7 @@ export default function FbxViewer({ fbxUrl }: FbxViewerProps) {
         shadows
         camera={{ fov: 75, position: [100, 100, 200], near: 0.1, far: 1000 }}
       >
-        {/* 부드러운 앰비언트 라이트 */}
         <ambientLight intensity={0.5} />
-        {/* 주광원: 방향성 라이트 */}
         <directionalLight
           castShadow
           intensity={1.2}
@@ -46,7 +44,6 @@ export default function FbxViewer({ fbxUrl }: FbxViewerProps) {
           shadow-camera-top={200}
           shadow-camera-bottom={-200}
         />
-        {/* 헤미스피어 라이트로 자연스러운 하늘/지면 반사 */}
         <hemisphereLight
           skyColor={0xaaaaaa}
           groundColor={0x444444}
@@ -54,10 +51,8 @@ export default function FbxViewer({ fbxUrl }: FbxViewerProps) {
           position={[0, 200, 0]}
         />
 
-        {/* OrbitControls (드래그로 회전/줌/팬) */}
         <OrbitControls enableDamping dampingFactor={0.05} />
 
-        {/* Model 로딩은 Suspense로 감싸기 */}
         <Suspense fallback={null}>
           <Model url={fbxUrl} />
         </Suspense>
