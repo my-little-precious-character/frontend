@@ -39,6 +39,11 @@ export default function Home() {
             />
             <Link
               to={`/generate?prompt=${encodeURIComponent(prompt)}`}
+              onClick={e => {
+                if (!prompt.trim()) {
+                  e.preventDefault();
+                }
+              }}
               className="bg-orange-600 px-5 text-white text-sm hover:bg-orange-700 transition flex items-center"
             >
               생성하기
