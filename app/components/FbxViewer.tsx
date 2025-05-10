@@ -6,10 +6,10 @@ import { FBXLoader } from "three/examples/jsm/loaders/FBXLoader";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 
 interface FbxViewerProps {
-  fbxBlob: Blob;
+  fbxUrl: string;
 }
 
-export default function FbxViewer({ fbxBlob }: FbxViewerProps) {
+export default function FbxViewer({ fbxUrl }: FbxViewerProps) {
   const mountRef = useRef<HTMLDivElement>(null);
   const modelRef = useRef<THREE.Object3D | null>(null);
   const animateIdRef = useRef<number | null>(null);
@@ -70,10 +70,9 @@ export default function FbxViewer({ fbxBlob }: FbxViewerProps) {
     animate();
 
     const loader = new FBXLoader();
-    const url = URL.createObjectURL(fbxBlob);
-    loader.load(url, (fbx) => {
+    loader.load(fbxUrl, (fbx: any) => {
       if (modelRef.current) scene.remove(modelRef.current);
-      fbx.traverse((child) => {
+      fbx.traverse((child: any) => {
         if (child instanceof THREE.Mesh) {
           child.castShadow = true;
           child.receiveShadow = true;
@@ -98,9 +97,8 @@ export default function FbxViewer({ fbxBlob }: FbxViewerProps) {
       renderer.dispose();
       container.removeChild(renderer.domElement);
       window.removeEventListener("resize", handleResize);
-      URL.revokeObjectURL(url);
     };
-  }, [fbxBlob]);
+  }, [fbxUrl]);
 
   return <div ref={mountRef} className="w-full h-full" />;
 }

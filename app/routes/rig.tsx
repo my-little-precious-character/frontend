@@ -23,7 +23,7 @@ export default function Generate() {
   const [progress, setProgress] = useState(0);
   const [taskId, setTaskId] = useState<string | null>(null);
   const hasStartedRef = useRef(false);
-  const [fbxFileBlob, setFbxFileBlob] = useState<Blob | null>(null);
+  const [fbxUrl, setFbxUrl] = useState<string | null>(null);
 
   // Request rigging
   useEffect(() => {
@@ -72,11 +72,7 @@ export default function Generate() {
         ws.close();
 
         // Download and save rigged object
-        fetch(`${API_BASE}/rigging?task_id=${taskId}`)
-          .then(res => res.blob())
-          .then(blob => {
-            setFbxFileBlob(blob);
-          })
+        setFbxUrl(`${API_BASE}/rigging?task_id=${taskId}`);
       }
     };
     ws.onerror = () => ws.close();
@@ -87,11 +83,11 @@ export default function Generate() {
     <main className="flex h-screen bg-gray-100 text-gray-800 font-sans">
       {/* 왼쪽 패널 */}
       <div className="w-1/2 flex items-center justify-center bg-white">
-        {!fbxFileBlob ? (
+        {!fbxUrl ? (
           <div className="animate-spin rounded-full h-12 w-12 border-4 border-gray-300 border-t-orange-600" />
         ) : (
           <Suspense fallback={<div className="animate-spin rounded-full h-12 w-12 border-4 border-gray-300 border-t-orange-600" />}>
-            <FbxViewer fbxBlob={fbxFileBlob} />
+            <FbxViewer fbxUrl={fbxUrl} />
           </Suspense>
         )}
       </div>
@@ -129,7 +125,7 @@ export default function Generate() {
 
         {/* 진행 상황 */}
         <div className="flex flex-1 flex-col justify-center items-center space-y-8">
-          {!fbxFileBlob ? (
+          {!fbxUrl ? (
             <div className="w-full max-w-md text-center space-y-4">
               <h2 className="text-xl font-semibold text-gray-700">
                 뼈대 생성 중...
@@ -162,7 +158,7 @@ export default function Generate() {
               </a>
               <Link
                 to="/preview"
-                state={{ fbxFileBlob }}
+                state={{ fbxUrl }}
                 className="bg-orange-600 text-white px-4 py-2 rounded hover:bg-orange-700 transition"
               >
                 미리보기 →
