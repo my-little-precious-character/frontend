@@ -39,7 +39,7 @@ function Model({ url, pose3d }: { url: string; pose3d?: Keypoint3D[] }) {
     }
   }, [pose3d, fbx]);
 
-  return <primitive object={fbx} />;
+  return <primitive object={fbx} position={[0, -70, 0]} />;
 }
 
 export default function FbxViewer({ fbxUrl, pose3d }: FbxViewerProps) {
