@@ -1,29 +1,48 @@
-import React, { Suspense } from "react";
+import React, { Suspense, useEffect } from "react";
 import { Canvas } from "@react-three/fiber";
 import { OrbitControls, useFBX } from "@react-three/drei";
 import * as THREE from "three";
 
-interface FbxViewerProps {
-  fbxUrl: string;
+interface Keypoint3D {
+  x: number;
+  y: number;
+  z: number;
+  score?: number;
 }
 
-function Model({ url }: { url: string }) {
-  // Drei의 useFBX 훅으로 FBX 로드
+interface FbxViewerProps {
+  fbxUrl: string;
+  pose3d?: Keypoint3D[];
+}
+
+function Model({ url, pose3d }: { url: string; pose3d?: Keypoint3D[] }) {
   const fbx = useFBX(url);
 
-  // traverse로 그림자 설정
-  fbx.traverse((child: THREE.Object3D) => {
-    if ((child as THREE.Mesh).isMesh) {
-      const mesh = child as THREE.Mesh;
-      mesh.castShadow = true;
-      mesh.receiveShadow = true;
+  // 그림자 설정
+  React.useEffect(() => {
+    fbx.traverse((child: THREE.Object3D) => {
+      if ((child as THREE.Mesh).isMesh) {
+        const mesh = child as THREE.Mesh;
+        mesh.castShadow = true;
+        mesh.receiveShadow = true;
+      }
+    });
+  }, [fbx]);
+
+  // TODO: 팔 말고 다른 부분도 조정 가능하게 하도
+  React.useEffect(() => {
+    if (!pose3d) return;
+    const bone = fbx.getObjectByName("LeftUpperArm");
+    if (bone) {
+      const angle = pose3d[11]?.y ?? 0;
+      bone.quaternion.setFromAxisAngle(new THREE.Vector3(1, 0, 0), angle);
     }
-  });
+  }, [pose3d, fbx]);
 
   return <primitive object={fbx} />;
 }
 
-export default function FbxViewer({ fbxUrl }: FbxViewerProps) {
+export default function FbxViewer({ fbxUrl, pose3d }: FbxViewerProps) {
   return (
     <div className="w-full h-full">
       <Canvas
@@ -54,7 +73,7 @@ export default function FbxViewer({ fbxUrl }: FbxViewerProps) {
         <OrbitControls enableDamping dampingFactor={0.05} />
 
         <Suspense fallback={null}>
-          <Model url={fbxUrl} />
+          <Model url={fbxUrl} pose3d={pose3d} />
         </Suspense>
       </Canvas>
     </div>

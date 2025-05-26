@@ -5,4 +5,6 @@ export default [
   route("generate", "routes/generate.tsx"),
   route("rig", "routes/rig.tsx"),
   route("preview", "routes/preview.tsx"),
+
+  route("test-preview", "routes/test-preview.tsx"),  // FIXME: Remove this after testing
 ] satisfies RouteConfig;
