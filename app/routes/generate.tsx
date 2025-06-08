@@ -58,7 +58,10 @@ export default function Generate() {
         fileInput.type = "file";
         fileInput.accept = "image/*";
         fileInput.onchange = async () => {
-          if (!fileInput.files?.[0]) return;  // TODO: exception handling
+          if (!fileInput.files?.[0]) {
+            alert("이미지가 업로드되지 않았습니다.");
+            return;
+          }
           const formData = new FormData();
           formData.append("file", fileInput.files[0]);
 
@@ -111,6 +114,9 @@ export default function Generate() {
             setObjBlob(objB);
             setMtlBlob(mtlB);
             setAlbedoBlob(albB);
+          })
+          .catch(err => {
+            alert("다시 시도해주세요. " + err.message);
           });
       }
     };

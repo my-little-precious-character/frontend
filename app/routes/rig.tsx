@@ -44,10 +44,18 @@ export default function Generate() {
           body: formData,
         });
 
+        if(!res.ok) {
+          const error = await res.json();
+          console.error("뼈대 생성 요청 실패:", error);
+          setProgress(0);
+          setTaskId(null);
+          return;
+        }
+
         const data = await res.json();
         setTaskId(data.task_id);
       } else {
-        // TODO: error handling
+        alert("3D 모델이 없습니다. 먼저 모델을 생성해주세요.");
       }
     }
 
