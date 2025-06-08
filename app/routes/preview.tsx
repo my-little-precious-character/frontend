@@ -40,14 +40,6 @@ export default function Generate() {
               </div>
               <span className="mt-2 text-sm font-medium text-gray-500">뼈대 생성</span>
             </div>
-
-            {/* Step 3 */}
-            <div className="relative z-10 flex flex-col items-center">
-              <div className="w-8 h-8 rounded-full bg-orange-600 text-white flex items-center justify-center font-bold">
-                3
-              </div>
-              <span className="mt-2 text-sm font-medium text-gray-500">미리보기</span>
-            </div>
           </div>
         </div>
 

@@ -112,14 +112,6 @@ export default function Generate() {
               </div>
               <span className="mt-2 text-sm font-medium text-gray-500">뼈대 생성</span>
             </div>
-
-            {/* Step 3 */}
-            <div className="relative z-10 flex flex-col items-center">
-              <div className="w-8 h-8 rounded-full bg-gray-300 text-white flex items-center justify-center font-bold">
-                3
-              </div>
-              <span className="mt-2 text-sm font-medium text-gray-500">미리보기</span>
-            </div>
           </div>
         </div>
 
@@ -152,17 +144,10 @@ export default function Generate() {
               <a
                 href={`${API_BASE}/rigging?task_id=${taskId}`}
                 download="model.fbx"
-                className="bg-gray-200 text-gray-800 px-4 py-2 rounded hover:bg-gray-300 transition"
+                className="bg-orange-600 text-white px-4 py-2 rounded hover:bg-orange-700 transition"
               >
                 .fbx 파일 다운로드
               </a>
-              <Link
-                to="/preview"
-                state={{ fbxUrl }}
-                className="bg-orange-600 text-white px-4 py-2 rounded hover:bg-orange-700 transition"
-              >
-                미리보기 →
-              </Link>
             </div>
           )}
         </div>
