@@ -1,10 +1,8 @@
-### For dev
-```bash
-npm install
-npm run dev
-```
-
 ### For deploy
+1. Clone
+```bash
+git clone git@github.com:my-little-precious-character/frontend.git
+```
 1. Set .env
 ```
 VITE_DREAMGAUSSIAN_URL=http://localhost:7722
