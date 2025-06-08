@@ -164,7 +164,7 @@ export default function Generate() {
 
         {/* 진행 상황 */}
         <div className="flex flex-1 flex-col justify-center items-center space-y-8">
-          {!objUrl ? (
+          {!objUrl || !mtlUrl || !albedoUrl ? (
             <div className="w-full max-w-md text-center space-y-4">
               <h2 className="text-xl font-semibold text-gray-700">
                 모델 생성 중...
@@ -188,14 +188,6 @@ export default function Generate() {
           ) : (
             <div className="flex flex-col items-center justify-center h-full space-y-4">
               <h2 className="text-xl font-semibold text-gray-700">모델 생성 완료!</h2>
-              <a
-                href={objUrl}
-                download="model.obj"
-                className="bg-gray-200 text-gray-800 px-4 py-2 rounded hover:bg-gray-300 transition"
-              >
-                .obj 파일 다운로드
-              </a>
-
               <Link
                 to="/rig"
                 state={{ objBlob, mtlBlob, albedoBlob, taskId }}
@@ -204,6 +196,29 @@ export default function Generate() {
                 뼈대 생성하러 가기 →
               </Link>
 
+              <div className="absolute bottom-8 right-8 flex flex-col space-y-2 items-end">
+                <a
+                  href={objUrl}
+                  download="model.obj"
+                  className="bg-gray-200 text-gray-800 px-4 py-2 rounded hover:bg-gray-300 transition"
+                >
+                  obj 파일 다운로드
+                </a>
+                <a
+                  href={mtlUrl}
+                  download="model.obj"
+                  className="bg-gray-200 text-gray-800 px-4 py-2 rounded hover:bg-gray-300 transition"
+                >
+                  mtl 파일 다운로드
+                </a>
+                <a
+                  href={albedoUrl}
+                  download="model.obj"
+                  className="bg-gray-200 text-gray-800 px-4 py-2 rounded hover:bg-gray-300 transition"
+                >
+                  albedo 파일 다운로드
+                </a>
+              </div>
             </div>
           )}
         </div>
