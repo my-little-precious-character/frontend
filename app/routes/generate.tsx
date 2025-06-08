@@ -172,10 +172,6 @@ export default function Generate() {
               <p className="text-sm font-medium text-gray-700">
                 진행률: {progress}%
               </p>
-              {/* TODO: 진행률이 나은지 남은시간이 나은지 비교해서 반영하기 */}
-              {/* <p className="text-sm font-medium text-gray-700">
-              남은 시간: {minutes}분 {seconds}초
-            </p> */}
             </div>
           ) : (
             <div className="flex flex-col items-center justify-center h-full space-y-4">
