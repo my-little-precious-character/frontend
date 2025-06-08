@@ -26,7 +26,7 @@ export default function Home() {
         <img
           src="/sample.obj.preview.png"
           alt="Generated Character"
-          className="h-96 object-contain rounded-xl"
+          className="w-full h-full object-cover"
         />
       </div>
 
