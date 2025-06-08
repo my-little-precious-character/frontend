@@ -2,6 +2,7 @@
 1. Clone
 ```bash
 git clone git@github.com:my-little-precious-character/frontend.git
+cd frontend
 ```
 1. Set .env
 ```
