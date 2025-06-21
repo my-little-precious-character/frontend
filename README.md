@@ -8,7 +8,7 @@ cd frontend
 ```
 VITE_DREAMGAUSSIAN_URL=http://localhost:7722
 VITE_RIGNET_URL=http://localhost:7723
-VITE_DREAMGAUSSIAN_MODE=test
+VITE_DREAMGAUSSIAN_MODE=prod
 VITE_RIGNET_MODE=prod
 ```
 
